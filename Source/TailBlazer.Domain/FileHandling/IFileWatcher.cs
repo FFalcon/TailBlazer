@@ -4,6 +4,8 @@ namespace TailBlazer.Domain.FileHandling
 {
     public interface IFileWatcher
     {
+        IObservable<FileSegmentCollection> Segments { get; }
+
         IObservable<FileNotification> Latest { get; }
         IObservable<FileStatus> Status { get; }
         string FullName { get; }

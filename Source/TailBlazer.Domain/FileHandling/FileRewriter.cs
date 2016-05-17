@@ -21,7 +21,6 @@ namespace TailBlazer.Domain.FileHandling
             
             var locker = new object();
 
-            //TODO: WHEN ORIGINAL FILE HAS ROLLED OVER, WE NEED TO CLEAR OUT THE LOCAL TEMP FILE
             Notifications = Observable.Create<FileNotification>(observer =>
             {
                 var newFile = Path.GetTempFileName();
@@ -38,7 +37,6 @@ namespace TailBlazer.Domain.FileHandling
                     return !OldStream.Exists ? OldStream : NewStream;
                 }).SubscribeSafe(observer);
 
-             //   var resultStream = newStream.SubscribeSafe(observer);
 
                 //Create a new file from the old one, starting at the spcified index
                 var fileWriter = origStream

@@ -33,12 +33,16 @@ namespace TailBlazer.Domain.FileHandling
             scheduler = scheduler ?? Scheduler.Default;
             
             var shared = _scanFrom.Select(start => start == 0
-                ? fileInfo.WatchFile(scheduler: scheduler)
-                : fileInfo.WatchFile(scheduler: scheduler).ScanFromEnd())
+                ? fileInfo.WatchFile(scheduler: scheduler, refreshPeriod:TimeSpan.FromSeconds(0.5))
+                : fileInfo.WatchFile(scheduler: scheduler, refreshPeriod: TimeSpan.FromSeconds(0.5)).ScanFromEnd())
                 .Switch();
 
             Latest = shared
-                .TakeWhile(notification => notification.Exists).Repeat()
+               .TakeWhile(notification => notification.Exists).Repeat()
+                .Replay(1).RefCount();
+            
+            Segments = Latest
+                .WithSegments()
                 .Replay(1).RefCount();
 
             Status = fileInfo.WatchFile(scheduler: scheduler).Select(notificiation =>
@@ -51,6 +55,8 @@ namespace TailBlazer.Domain.FileHandling
             .StartWith(FileStatus.Loading)
             .DistinctUntilChanged();
         }
+
+        public IObservable<FileSegmentCollection> Segments { get;  }
 
         public void ScanFrom(long scanFrom)
         {

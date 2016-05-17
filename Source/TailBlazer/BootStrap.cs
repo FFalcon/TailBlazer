@@ -7,6 +7,7 @@ using TailBlazer.Infrastucture.AppState;
 using TailBlazer.Views.Layout;
 using TailBlazer.Views.WindowManagement;
 using System.Runtime.InteropServices;
+using System.Windows.Media.Animation;
 
 namespace TailBlazer
 {
@@ -18,6 +19,8 @@ namespace TailBlazer
         [STAThread]
         public static void Main(string[] args)
         {
+            Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline), new FrameworkPropertyMetadata { DefaultValue = 30 });
+
             FreeConsole();
 
             var app = new App { ShutdownMode = ShutdownMode.OnLastWindowClose };

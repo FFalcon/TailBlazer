@@ -26,7 +26,7 @@ namespace TailBlazer.Domain.FileHandling.Search
             _fileWatcher = fileWatcher;
 
             //Add a complete file display
-            All = _fileWatcher.Latest.Index().Replay(1).RefCount();
+            All = _fileWatcher.Segments.Index().Replay(1).RefCount();
 
             //create a collection with 1 item, which is used to show entire file
             var systemSearches = new SourceCache<SearchInfo, string>(t => t.SearchText);
@@ -38,7 +38,7 @@ namespace TailBlazer.Domain.FileHandling.Search
                 .IgnoreUpdateWhen((current,previous)=> SearchMetadata.EffectsFilterComparer.Equals(current, previous))
                 .Transform(meta =>
                 {
-                    var latest = _fileWatcher.Latest
+                    var latest = _fileWatcher.Segments
                         .Search(meta.BuildPredicate())
                         .Replay(1).RefCount();
 
